@@ -45,13 +45,16 @@ const MapView = ({ currentPosition, routeCoordinates, allRoutePoints, isPlaying 
         zoomControl: true,
       });
 
-      // Position default zoom controls away from overlay UI
-      map.zoomControl.setPosition("bottomright");
+      // Position controls at the top
+      map.zoomControl.setPosition("topright");
 
       L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
         maxZoom: 19,
       }).addTo(map);
+
+      // Move attribution to the top-left to avoid bottom overlays
+      map.attributionControl.setPosition("topleft");
 
       // Add full route as a faint line
       const fullRoute = allRoutePoints.map((p) => [p.latitude, p.longitude] as [number, number]);
@@ -117,7 +120,8 @@ const MapView = ({ currentPosition, routeCoordinates, allRoutePoints, isPlaying 
           background: #1a1f2e;
         }
         /* Ensure Leaflet controls have comfortable margins on mobile */
-        .leaflet-bottom.leaflet-right { margin: 1rem; }
+        .leaflet-top.leaflet-right { margin: 1rem; }
+        .leaflet-top.leaflet-left { margin: 1rem; }
       `}</style>
     </div>
   );
