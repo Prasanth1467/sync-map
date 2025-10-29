@@ -45,6 +45,9 @@ const MapView = ({ currentPosition, routeCoordinates, allRoutePoints, isPlaying 
         zoomControl: true,
       });
 
+      // Position default zoom controls away from overlay UI
+      map.zoomControl.setPosition("bottomright");
+
       L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
         maxZoom: 19,
@@ -59,11 +62,13 @@ const MapView = ({ currentPosition, routeCoordinates, allRoutePoints, isPlaying 
         dashArray: "10, 10",
       }).addTo(map);
 
-      // Add traveled route polyline
+      // Add traveled route polyline - make it prominent
       polylineRef.current = L.polyline([], {
-        color: "#06b6d4",
-        weight: 4,
-        opacity: 0.8,
+        color: "#2563eb", // blue
+        weight: 6,
+        opacity: 0.9,
+        lineCap: "round",
+        lineJoin: "round",
       }).addTo(map);
 
       // Add vehicle marker
@@ -80,18 +85,22 @@ const MapView = ({ currentPosition, routeCoordinates, allRoutePoints, isPlaying 
     };
   }, [allRoutePoints]);
 
+  // Removed fit-to-route logic along with the zoom button
+
   // Update marker position and polyline
   useEffect(() => {
     if (markerRef.current && polylineRef.current) {
       markerRef.current.setLatLng(currentPosition);
       
-      if (isPlaying && routeCoordinates.length > 0) {
+      if (routeCoordinates.length > 0) {
         polylineRef.current.setLatLngs(routeCoordinates);
-        
-        // Pan to keep vehicle in view
-        if (mapRef.current) {
-          mapRef.current.panTo(currentPosition, { animate: true, duration: 0.5 });
-        }
+        polylineRef.current.bringToFront();
+      }
+      markerRef.current.setZIndexOffset(1000);
+      
+      // Pan to keep vehicle in view while playing
+      if (isPlaying && mapRef.current) {
+        mapRef.current.panTo(currentPosition, { animate: true, duration: 0.5 });
       }
     }
   }, [currentPosition, routeCoordinates, isPlaying]);
@@ -107,6 +116,8 @@ const MapView = ({ currentPosition, routeCoordinates, allRoutePoints, isPlaying 
         .leaflet-container {
           background: #1a1f2e;
         }
+        /* Ensure Leaflet controls have comfortable margins on mobile */
+        .leaflet-bottom.leaflet-right { margin: 1rem; }
       `}</style>
     </div>
   );

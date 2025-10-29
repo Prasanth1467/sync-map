@@ -25,13 +25,15 @@ const InfoPanel = ({
   };
 
   const formatCoordinate = (value: number, decimals = 4) => value.toFixed(decimals);
+  const roundedBattery = Math.round(batteryLevel);
+  const roundedProgress = Math.round(progress);
 
   return (
     <motion.div
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.5, delay: 0.2 }}
-      className="absolute bottom-6 left-6 z-[1000] bg-card/80 backdrop-blur-md border border-primary/20 rounded-xl shadow-card p-5 space-y-4 w-80"
+      className="pointer-events-auto absolute bottom-6 left-6 z-[1000] bg-card/80 backdrop-blur-md border border-primary/20 rounded-xl shadow-card p-5 space-y-4 w-72 sm:w-80"
     >
       <div className="flex items-center gap-2 mb-4 pb-3 border-b border-border">
         <Navigation className="w-5 h-5 text-primary" />
@@ -75,7 +77,7 @@ const InfoPanel = ({
               <div className="flex-1 bg-secondary rounded-full h-2 overflow-hidden">
                 <motion.div
                   initial={{ width: 0 }}
-                  animate={{ width: `${batteryLevel}%` }}
+                  animate={{ width: `${roundedBattery}%` }}
                   transition={{ duration: 0.5 }}
                   className={`h-full ${
                     batteryLevel > 60
@@ -86,7 +88,7 @@ const InfoPanel = ({
                   }`}
                 />
               </div>
-              <span className="text-sm font-semibold w-12 text-right">{batteryLevel}%</span>
+              <span className="text-sm font-semibold w-12 text-right">{roundedBattery}%</span>
             </div>
           </div>
         </div>
@@ -94,12 +96,12 @@ const InfoPanel = ({
         <div className="pt-3 border-t border-border">
           <div className="flex justify-between items-center mb-2">
             <span className="text-xs text-muted-foreground">Route Progress</span>
-            <span className="text-sm font-semibold text-accent">{progress}%</span>
+            <span className="text-sm font-semibold text-accent">{roundedProgress}%</span>
           </div>
           <div className="bg-secondary rounded-full h-2 overflow-hidden">
             <motion.div
               initial={{ width: 0 }}
-              animate={{ width: `${progress}%` }}
+              animate={{ width: `${roundedProgress}%` }}
               transition={{ duration: 0.3 }}
               className="h-full bg-gradient-primary"
             />

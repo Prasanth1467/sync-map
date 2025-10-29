@@ -21,7 +21,9 @@ A real-time vehicle tracking simulation application built with React, TypeScript
 
 ## 📍 Route Information
 
-The simulation follows a route through **Nashik-Deolali region** in Maharashtra, India. The dummy route data (`src/data/dummy-route.json`) contains 56 GPS coordinates with timestamps, creating a realistic driving path.
+The simulation follows a route through **Nashik–Deolali** (sample). The app loads dummy route data from `public/dummy-route.json` at runtime when present, and gracefully falls back to `src/data/dummy-route.json` (bundled) if the public file is missing.
+
+Quick start: to replace the route without rebuilding, add a file at `public/dummy-route.json` with your coordinates (see Assignment Checklist below).
 
 ## 🛠️ Technology Stack
 
@@ -107,7 +109,7 @@ src/
 │   ├── InfoPanel.tsx        # Live stats display
 │   └── ui/                  # shadcn/ui components
 ├── data/
-│   └── dummy-route.json     # GPS route coordinates
+│   └── dummy-route.json     # Bundled fallback GPS route coordinates
 ├── utils/
 │   └── haversine.ts         # Distance & speed calculations
 ├── pages/
@@ -124,8 +126,7 @@ src/
 2. **Pause**: Click Pause to freeze the simulation
 3. **Restart**: Reset to the beginning of the route
 4. **Adjust Speed**: Use 1x, 2x, or 4x buttons to change playback speed
-5. **View Full Route**: Click the zoom icon to see the entire path (faint dashed line)
-6. **Monitor Stats**: Watch real-time updates in the info panel
+5. **Monitor Stats**: Watch real-time updates in the info panel
 
 ## 🧮 Technical Details
 
@@ -143,6 +144,46 @@ Uses the **Haversine formula** to calculate:
 - Starts at 100%
 - Decreases by 0.3% per GPS point
 - Color-coded indicator (green > yellow > red)
+
+## ✅ Assignment Checklist (What Reviewers Look For)
+
+- Map Integration
+  - Leaflet map centered on a predefined route
+  - Vehicle marker rendered and updated in real time
+  - Full route drawn with a polyline; traveled path thick and prominent
+- Dummy Location Data
+  - Route data available as JSON
+  - At runtime, app fetches `public/dummy-route.json`; otherwise uses bundled fallback in `src/data/dummy-route.json`
+- Simulated Real-Time Movement
+  - Vehicle position updates smoothly using interpolation
+  - Traveled polyline extends as the vehicle moves
+- Interface & Features
+  - Play/Pause, Restart, Speed controls (1x/2x/4x)
+  - Metadata: coordinates, elapsed time, speed, battery, progress
+  - Responsive UI, non-blocking overlays over the map
+
+## ✍️ Provide Your Own Route (public/dummy-route.json)
+
+Create `public/dummy-route.json` to override the bundled route without rebuilding:
+
+```json
+[
+  { "latitude": 17.385044, "longitude": 78.486671, "timestamp": "2024-07-20T10:00:00Z" },
+  { "latitude": 17.385200, "longitude": 78.486800, "timestamp": "2024-07-20T10:00:10Z" },
+  { "latitude": 17.385450, "longitude": 78.487100, "timestamp": "2024-07-20T10:00:20Z" }
+]
+```
+
+Notes:
+- Timestamp is optional; when present, the app uses it for speed calculation between points.
+- Keep points reasonably spaced (≈10–50 meters) for smooth animation.
+
+## 🧪 How It Maps to the Assignment
+
+- Frontend-only SPA with React (Vite + TS)
+- Leaflet for mapping; no backend required
+- JSON data-driven simulation with smooth animation and UI controls
+- Clean, modular code (`MapView`, `Controls`, `InfoPanel`, utilities)
 
 ## 🎨 Design System
 

@@ -1,12 +1,11 @@
 import { motion } from "framer-motion";
-import { Play, Pause, RotateCcw, Zap, ZoomIn } from "lucide-react";
+import { Play, Pause, RotateCcw, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface ControlsProps {
   isPlaying: boolean;
   onPlayPause: () => void;
   onRestart: () => void;
-  onViewFullRoute: () => void;
   speedMultiplier: number;
   onSpeedChange: (speed: number) => void;
 }
@@ -15,7 +14,6 @@ const Controls = ({
   isPlaying,
   onPlayPause,
   onRestart,
-  onViewFullRoute,
   speedMultiplier,
   onSpeedChange,
 }: ControlsProps) => {
@@ -26,7 +24,7 @@ const Controls = ({
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="absolute top-6 right-6 z-[1000] bg-card/80 backdrop-blur-md border border-primary/20 rounded-xl shadow-card p-4 space-y-3"
+      className="pointer-events-auto absolute top-6 right-6 z-[1000] bg-card/80 backdrop-blur-md border border-primary/20 rounded-xl shadow-card p-4 space-y-3"
     >
       <div className="flex gap-2">
         <Button
@@ -45,15 +43,6 @@ const Controls = ({
           className="transition-all hover:scale-105"
         >
           <RotateCcw className="w-5 h-5" />
-        </Button>
-
-        <Button
-          onClick={onViewFullRoute}
-          variant="secondary"
-          size="icon"
-          className="transition-all hover:scale-105"
-        >
-          <ZoomIn className="w-5 h-5" />
         </Button>
       </div>
 
