@@ -24,7 +24,7 @@ const Controls = ({
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="pointer-events-auto absolute top-6 right-6 z-[1000] bg-card/80 backdrop-blur-md border border-primary/20 rounded-xl shadow-card p-4 space-y-3"
+      className="hidden md:block pointer-events-auto absolute top-6 right-6 z-[1000] bg-card/80 backdrop-blur-md border border-primary/20 rounded-xl shadow-card p-4 space-y-3"
     >
       <div className="flex gap-2">
         <Button

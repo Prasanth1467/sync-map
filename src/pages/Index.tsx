@@ -5,7 +5,7 @@ import InfoPanel from "@/components/InfoPanel";
 import routeDataFallback from "@/data/dummy-route.json";
 import { haversineDistance, calculateSpeed, interpolateCoordinates } from "@/utils/haversine";
 import { motion } from "framer-motion";
-import { Truck } from "lucide-react";
+import { Truck, Play, Pause, RotateCcw, X } from "lucide-react";
 
 interface RoutePoint {
   latitude: number;
@@ -24,6 +24,9 @@ const Index = () => {
   const [batteryLevel, setBatteryLevel] = useState(100);
   const [speedMultiplier, setSpeedMultiplier] = useState(1);
   const [interpolationProgress, setInterpolationProgress] = useState(0);
+  // Mobile UI state
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const [isSpeedMenuOpen, setIsSpeedMenuOpen] = useState(false);
 
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const startTimeRef = useRef<Date | null>(null);
@@ -194,11 +197,11 @@ const Index = () => {
     <div className="relative w-full h-screen overflow-hidden bg-background">
       {/* Overlay wrapper prevents map interaction from being blocked */}
       <div className="pointer-events-none absolute inset-0 z-[1000]">
-        {/* Header */}
+        {/* Desktop header */}
         <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-          className="pointer-events-auto absolute top-6 left-6 bg-card/80 backdrop-blur-md border border-primary/20 rounded-xl shadow-card px-5 py-3 max-w-[85vw] sm:max-w-none"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="hidden md:block pointer-events-auto absolute top-6 left-6 bg-card/80 backdrop-blur-md border border-primary/20 rounded-xl shadow-card px-5 py-3"
         >
           <div className="flex items-center gap-3">
             <div className="p-2 bg-gradient-primary rounded-lg">
@@ -210,6 +213,7 @@ const Index = () => {
             </div>
           </div>
         </motion.div>
+
       </div>
 
       {/* Map */}
@@ -230,7 +234,8 @@ const Index = () => {
         onSpeedChange={setSpeedMultiplier}
       />
 
-      {/* Info Panel */}
+      {/* Desktop Info Panel */}
+      <div className="hidden md:block">
       <InfoPanel
         currentLat={currentPosition[0]}
         currentLng={currentPosition[1]}
@@ -239,6 +244,120 @@ const Index = () => {
         batteryLevel={batteryLevel}
         progress={progress}
       />
+      </div>
+
+      {/* Mobile Bottom Sheet */}
+      <div className="md:hidden">
+        {/* Collapsed bar */}
+        {!isSheetOpen && (
+          <motion.button
+            onClick={() => setIsSheetOpen(true)}
+            initial={{ x: -80, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            transition={{ duration: 0.3 }}
+            className="pointer-events-auto fixed bottom-14 left-4 z-[1050] bg-slate-800/90 backdrop-blur-lg border border-white/10 rounded-xl shadow-lg px-3 py-2 flex items-center gap-3"
+          >
+            <div className="flex items-center gap-1.5">
+              <span className="text-[10px] font-medium text-white/60 uppercase tracking-wide">Speed</span>
+              <span className="text-xs font-semibold text-white">{currentSpeed.toFixed(1)} km/h</span>
+            </div>
+            <div className="w-px h-4 bg-white/20" />
+            <div className="flex items-center gap-1.5">
+              <span className="text-[10px] font-medium text-white/60 uppercase tracking-wide">Battery</span>
+              <span className="text-xs font-semibold text-white">{Math.round(batteryLevel)}%</span>
+            </div>
+          </motion.button>
+        )}
+
+        {/* Expanded sheet -> left drawer on mobile */}
+        {isSheetOpen && (
+          <>
+            <motion.div
+              initial={{ x: "-100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "-100%" }}
+              transition={{ type: "tween", duration: 0.35, ease: "easeInOut" }}
+              className="pointer-events-auto fixed inset-y-0 left-0 z-[1100] w-[88vw] max-w-sm"
+            >
+              <div className="h-full bg-slate-800/90 backdrop-blur-lg border-r border-white/10 shadow-lg p-4 rounded-r-2xl">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="h-1 w-12 rounded-full bg-white/30" />
+                  <button
+                    aria-label="Close"
+                    onClick={() => setIsSheetOpen(false)}
+                    className="p-2 rounded-full bg-white/10 hover:bg-white/15 text-white"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                </div>
+                <InfoPanel
+                  variant="sheet"
+                  currentLat={currentPosition[0]}
+                  currentLng={currentPosition[1]}
+                  currentSpeed={currentSpeed}
+                  elapsedTime={elapsedTime}
+                  batteryLevel={batteryLevel}
+                  progress={progress}
+                />
+              </div>
+            </motion.div>
+            {/* click-away area */}
+            <button
+              aria-label="Close"
+              onClick={() => setIsSheetOpen(false)}
+              className="fixed inset-0 z-[1090] h-full w-full bg-black/20"
+            />
+          </>
+        )}
+
+        {/* Speed FAB */}
+        <div className="pointer-events-auto fixed bottom-24 left-4 z-[1120] space-y-3">
+          {/* Play/Pause and Reset cluster */}
+          <div className="flex items-center justify-start gap-2">
+            <button
+              onClick={handleRestart}
+              aria-label="Restart"
+              className="h-10 w-10 rounded-full bg-slate-800/90 text-white shadow-lg border border-white/10 flex items-center justify-center"
+            >
+              <RotateCcw className="h-5 w-5" />
+            </button>
+            <button
+              onClick={handlePlayPause}
+              aria-label={isPlaying ? "Pause" : "Play"}
+              className={`h-12 w-12 rounded-full text-white shadow-lg border border-white/10 flex items-center justify-center ${
+                isPlaying ? "bg-rose-600/90" : "bg-emerald-600/90"
+              }`}
+            >
+              {isPlaying ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5" />}
+            </button>
+          </div>
+          <button
+            onClick={() => setIsSpeedMenuOpen((v) => !v)}
+            className="h-12 w-12 rounded-full bg-slate-800/90 text-white shadow-lg border border-white/10 flex items-center justify-center"
+          >
+            <span className="text-sm font-semibold">{speedMultiplier}x</span>
+          </button>
+          {isSpeedMenuOpen && (
+            <div className="mt-2 rounded-2xl bg-slate-800/95 text-white border border-white/10 shadow-lg p-2 flex gap-2">
+              {[1, 2, 4].map((speed) => (
+                <button
+                  key={speed}
+                  onClick={() => {
+                    setSpeedMultiplier(speed);
+                    setIsSpeedMenuOpen(false);
+                  }}
+                  className={`px-3 py-2 rounded-xl text-sm ${
+                    speedMultiplier === speed ? "bg-white/20" : "bg-white/5 hover:bg-white/10"
+                  }`}
+                >
+                  {speed}x
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
     </div>
   );
 };

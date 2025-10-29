@@ -8,6 +8,7 @@ interface InfoPanelProps {
   elapsedTime: string;
   batteryLevel: number;
   progress: number;
+  variant?: "overlay" | "sheet"; // overlay (desktop), sheet (mobile embedded)
 }
 
 const InfoPanel = ({
@@ -17,6 +18,7 @@ const InfoPanel = ({
   elapsedTime,
   batteryLevel,
   progress,
+  variant = "overlay",
 }: InfoPanelProps) => {
   const getBatteryColor = () => {
     if (batteryLevel > 60) return "text-success";
@@ -28,12 +30,17 @@ const InfoPanel = ({
   const roundedBattery = Math.round(batteryLevel);
   const roundedProgress = Math.round(progress);
 
+  const containerClass =
+    variant === "overlay"
+      ? "pointer-events-auto absolute bottom-6 left-6 z-[1000] bg-card/80 backdrop-blur-md border border-primary/20 rounded-xl shadow-card p-5 space-y-4 w-72 sm:w-80"
+      : "pointer-events-auto bg-card/80 backdrop-blur-md border border-primary/20 rounded-2xl shadow-card p-5 space-y-4 w-full";
+
   return (
     <motion.div
-      initial={{ opacity: 0, x: -20 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ duration: 0.5, delay: 0.2 }}
-      className="pointer-events-auto absolute bottom-6 left-6 z-[1000] bg-card/80 backdrop-blur-md border border-primary/20 rounded-xl shadow-card p-5 space-y-4 w-72 sm:w-80"
+      initial={{ opacity: 0, y: variant === "overlay" ? 0 : 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+      className={containerClass}
     >
       <div className="flex items-center gap-2 mb-4 pb-3 border-b border-border">
         <Navigation className="w-5 h-5 text-primary" />
