@@ -23,7 +23,7 @@ A real-time vehicle tracking simulation application built with React, TypeScript
 
 The simulation follows a route through **Nashik–Deolali** (sample). The app loads dummy route data from `public/dummy-route.json` at runtime when present, and gracefully falls back to `src/data/dummy-route.json` (bundled) if the public file is missing.
 
-Quick start: to replace the route without rebuilding, add a file at `public/dummy-route.json` with your coordinates (see Assignment Checklist below).
+Quick start: to replace the route without rebuilding, add a file at `public/dummy-route.json` with your coordinates.
 
 ## 🛠️ Technology Stack
 
@@ -145,23 +145,6 @@ Uses the **Haversine formula** to calculate:
 - Decreases by 0.3% per GPS point
 - Color-coded indicator (green > yellow > red)
 
-## ✅ Assignment Checklist (What Reviewers Look For)
-
-- Map Integration
-  - Leaflet map centered on a predefined route
-  - Vehicle marker rendered and updated in real time
-  - Full route drawn with a polyline; traveled path thick and prominent
-- Dummy Location Data
-  - Route data available as JSON
-  - At runtime, app fetches `public/dummy-route.json`; otherwise uses bundled fallback in `src/data/dummy-route.json`
-- Simulated Real-Time Movement
-  - Vehicle position updates smoothly using interpolation
-  - Traveled polyline extends as the vehicle moves
-- Interface & Features
-  - Play/Pause, Restart, Speed controls (1x/2x/4x)
-  - Metadata: coordinates, elapsed time, speed, battery, progress
-  - Responsive UI, non-blocking overlays over the map
-
 ## ✍️ Provide Your Own Route (public/dummy-route.json)
 
 Create `public/dummy-route.json` to override the bundled route without rebuilding:
@@ -192,9 +175,7 @@ Notes:
 - **Background**: Dark navy (`#1e293b`)
 - **Effects**: Glass-morphism, gradient overlays, glow shadows
 
-## 📄 License
 
-MIT License - feel free to use this project for learning or commercial purposes.
 
 ## 🤝 Contributing
 
